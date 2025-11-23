@@ -1,0 +1,231 @@
+Here is a **complete, professional, ready-to-paste README** with full instructions.
+This is the final version — you can copy/paste this directly to GitHub from your phone.
+
+---
+
+# 📘 Spec-Driven Development (SDD) in Python
+
+*A full example project using FastAPI + OpenAPI + Pydantic*
+
+This repository demonstrates how to build an API using **Spec-Driven Development (SDD)**, where the **specification is created first** and becomes the **single source of truth** for:
+
+* API routes
+* Request/response models
+* Validation
+* Implementation
+* Testing
+
+---
+
+# 📂 Project Structure
+
+```
+spec-driven-python/
+│
+├── openapi.yaml         # The API specification
+├── models.py            # Generated Pydantic models from the spec
+├── app/
+│   └── main.py          # FastAPI application implementation
+├── tests/
+│   └── test_api.py      # Tests for the API
+└── README.md
+```
+
+---
+
+# 🚀 Getting Started
+
+Follow the steps below to run the project.
+
+---
+
+## 1️⃣ Install Dependencies
+
+Create a virtual environment (optional but recommended):
+
+```
+python -m venv venv
+source venv/bin/activate      # Mac/Linux
+venv\Scripts\activate         # Windows
+```
+
+Install required packages:
+
+```
+pip install fastapi uvicorn pydantic datamodel-code-generator pytest
+```
+
+---
+
+## 2️⃣ Understand the Spec (`openapi.yaml`)
+
+All functionality comes from this file:
+
+```yaml
+openapi: 3.0.0
+info:
+  title: User Service
+  version: "1.0"
+paths:
+  /users/{user_id}:
+    get:
+      summary: Get a user by ID
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: User not found
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+      required: [id, name]
+```
+
+This file defines:
+
+* routes
+* parameters
+* responses
+* JSON model shapes
+
+---
+
+## 3️⃣ Generate the Models
+
+Run:
+
+```
+datamodel-codegen --input openapi.yaml --input-file-type=openapi --output models.py
+```
+
+This creates the `models.py` file automatically.
+
+Sample generated file:
+
+```python
+from pydantic import BaseModel
+
+class User(BaseModel):
+    id: int
+    name: str
+```
+
+If the spec changes → regenerate this file.
+
+---
+
+## 4️⃣ Run the FastAPI App
+
+Start the API server:
+
+```
+uvicorn app.main:app --reload
+```
+
+Open the docs in the browser:
+
+* Swagger UI → [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+* ReDoc → [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
+
+---
+
+## 5️⃣ Run Tests
+
+This project uses pytest.
+
+```
+pytest
+```
+
+Example tests include checking:
+
+* valid user response
+* missing user response (404)
+
+---
+
+# 📌 How Spec-Driven Development Works
+
+### 1. Define the API in `openapi.yaml`
+
+This is the **source of truth**.
+
+### 2. Generate the models
+
+Tools ensure 100% consistency with the spec.
+
+### 3. Implement the API
+
+Implementation MUST follow the spec.
+
+### 4. Test using pytest & spec-based tools
+
+You can also use Schemathesis:
+
+```
+schemathesis run openapi.yaml --base-url=http://localhost:8000
+```
+
+### 5. Change the spec → regenerate models
+
+The implementation will break if it does not match the updated spec.
+This ensures strict contract correctness.
+
+---
+
+# 🧠 Why Use Spec-Driven Development?
+
+* Guarantees consistent API design
+* Enforces strict contracts between backend, frontend, and clients
+* Enables auto-generated documentation
+* Avoids mismatched request/response formats
+* Simplifies onboarding
+* Prevents breaking changes
+
+---
+
+# 🛠 Tools Used
+
+| Purpose               | Tool                     |
+| --------------------- | ------------------------ |
+| API framework         | FastAPI                  |
+| Models                | Pydantic                 |
+| Spec → Code generator | datamodel-code-generator |
+| Testing               | pytest                   |
+| API fuzzing           | schemathesis (optional)  |
+
+---
+
+# 📞 Support
+
+If you want:
+
+* Dockerfile
+* GitHub Actions CI/CD
+* Automatic code generation script
+* Advanced SDD example (multiple endpoints, database, auth)
+
+Just ask and I will generate it for you.
+
+---
+
+# ✅ End of README
+
+You can paste this directly into GitHub.
